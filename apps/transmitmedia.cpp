@@ -359,7 +359,7 @@ void SrtCommon::InitParameters(string host, map<string,string> par)
 
 void SrtCommon::PrepareListener(string host, int port, int backlog)
 {
-    m_bindsock = srt_socket(AF_UNIX, SOCK_DGRAM, 0);
+    m_bindsock = srt_socket(AF_INET, SOCK_DGRAM, 0);
     if ( m_bindsock == SRT_ERROR )
         Error(UDT::getlasterror(), "srt_socket");
 
@@ -560,7 +560,7 @@ void SrtCommon::OpenClient(string host, int port)
 
 void SrtCommon::PrepareClient()
 {
-    m_sock = srt_socket(AF_UNIX, SOCK_DGRAM, 0);
+    m_sock = srt_socket(AF_INET, SOCK_DGRAM, 0);
     if ( m_sock == SRT_ERROR )
         Error(UDT::getlasterror(), "srt_socket");
 
@@ -602,7 +602,7 @@ void SrtCommon::Error(UDT::ERRORINFO& udtError, string src)
 
 void SrtCommon::OpenRendezvous(string adapter, string host, int port)
 {
-    m_sock = srt_socket(AF_UNIX, SOCK_DGRAM, 0);
+    m_sock = srt_socket(AF_INET, SOCK_DGRAM, 0);
     if ( m_sock == SRT_ERROR )
         Error(UDT::getlasterror(), "srt_socket");
 
@@ -809,7 +809,7 @@ void SrtModel::Establish(ref_t<std::string> name)
         {
             // Must rely on a randomly selected one. Extract the port
             // so that it will be reused next time.
-            sockaddr_any s(AF_UNIX);
+            sockaddr_any s(AF_INET);
             int namelen = s.size();
             if ( srt_getsockname(Socket(), &s, &namelen) == SRT_ERROR )
             {
