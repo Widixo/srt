@@ -359,7 +359,7 @@ void SrtCommon::InitParameters(string host, map<string,string> par)
 
 void SrtCommon::PrepareListener(string host, int port, int backlog)
 {
-    m_bindsock = srt_socket(AF_INET, SOCK_DGRAM, 0);
+    m_bindsock = srt_socket(AF_UNIX, SOCK_DGRAM, 0);
     if ( m_bindsock == SRT_ERROR )
         Error(UDT::getlasterror(), "srt_socket");
 
@@ -560,7 +560,7 @@ void SrtCommon::OpenClient(string host, int port)
 
 void SrtCommon::PrepareClient()
 {
-    m_sock = srt_socket(AF_INET, SOCK_DGRAM, 0);
+    m_sock = srt_socket(AF_UNIX, SOCK_DGRAM, 0);
     if ( m_sock == SRT_ERROR )
         Error(UDT::getlasterror(), "srt_socket");
 
@@ -602,7 +602,7 @@ void SrtCommon::Error(UDT::ERRORINFO& udtError, string src)
 
 void SrtCommon::OpenRendezvous(string adapter, string host, int port)
 {
-    m_sock = srt_socket(AF_INET, SOCK_DGRAM, 0);
+    m_sock = srt_socket(AF_UNIX, SOCK_DGRAM, 0);
     if ( m_sock == SRT_ERROR )
         Error(UDT::getlasterror(), "srt_socket");
 
@@ -809,7 +809,7 @@ void SrtModel::Establish(ref_t<std::string> name)
         {
             // Must rely on a randomly selected one. Extract the port
             // so that it will be reused next time.
-            sockaddr_any s(AF_INET);
+            sockaddr_any s(AF_UNIX);
             int namelen = s.size();
             if ( srt_getsockname(Socket(), &s, &namelen) == SRT_ERROR )
             {
@@ -945,7 +945,7 @@ protected:
 
     void Setup(string host, int port, map<string,string> attr)
     {
-        m_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+        m_sock = socket(AF_UNIX, SOCK_DGRAM, IPPROTO_UDP);
         if (m_sock == -1)
             Error(SysError(), "UdpCommon::Setup: socket");
 
@@ -993,7 +993,7 @@ protected:
             if ( adapter == "" )
             {
                 Verb() << "Multicast: home address: INADDR_ANY:" << port;
-                maddr.sin_family = AF_INET;
+                maddr.sin_family = AF_UNIX;
                 maddr.sin_addr.s_addr = htonl(INADDR_ANY);
                 maddr.sin_port = htons(port); // necessary for temporary use
             }
@@ -1009,7 +1009,7 @@ protected:
                 opt_name = IP_ADD_SOURCE_MEMBERSHIP;
                 mreq_ssm.imr_multiaddr.s_addr = sadr.sin_addr.s_addr;
                 mreq_ssm.imr_interface.s_addr = maddr.sin_addr.s_addr;
-                inet_pton(AF_INET, attr.at("source").c_str(), &mreq_ssm.imr_sourceaddr);
+                inet_pton(AF_UNIX, attr.at("source").c_str(), &mreq_ssm.imr_sourceaddr);
                 mreq_arg_size = sizeof(mreq_ssm);
                 mreq_arg_ptr = &mreq_ssm;
             }
